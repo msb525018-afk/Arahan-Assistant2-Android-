@@ -1,0 +1,37 @@
+name: Build Arahan Assistant APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: دریافت پروژه
+        uses: actions/checkout@v4
+
+      - name: نصب Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: آماده‌سازی Gradle
+        run: |
+          chmod +x ./gradlew
+
+      - name: ساخت APK
+        run: |
+          ./gradlew assembleDebug --stacktrace
+
+      - name: انتشار APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Arahan-Assistant-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
